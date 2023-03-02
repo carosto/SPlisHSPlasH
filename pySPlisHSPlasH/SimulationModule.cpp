@@ -27,45 +27,53 @@ using namespace pybind11::literals;
 template <typename... Args>
 using overload_cast_ = pybind11::detail::overload_cast_impl<Args...>;
 
-void py_init_simulator(SPH::SimulatorBase& obj,
+void py_init_simulator(SPH::SimulatorBase &obj,
                        std::string sceneFile = "data/Scenes/DoubleDamBreak.json", // TODO: change to empty default
                        std::string programName = "pySPlisHSPlasH",
-                       bool useCache = true, 
+                       bool useCache = true,
                        std::string stateFile = "",
                        std::string outputDir = "",
                        bool initialPause = true,
-                       bool useGui = true, 
-					   float stopAt = -1.0f, 
-					   std::string param="")
-                       {
-                           std::vector<std::string> argv;
-                           argv.push_back(programName);
-                           argv.push_back("--scene-file"); argv.push_back(sceneFile);
-                           if(!useCache) argv.push_back("--no-cache");
-                           argv.push_back("--stopAt");
-                           argv.push_back(std::to_string(stopAt));
-                           if (strcmp(param.c_str(), "") != 0) {
-                               argv.push_back("--param");
-                               argv.push_back(param);
-                           }
-                           if(strcmp(stateFile.c_str(), "") != 0) {
-                                   argv.push_back("--state-file");
-                                   argv.push_back(stateFile);
-                           }
-                           if(strcmp(outputDir.c_str(), "") != 0) {
-                                   argv.push_back("--output-dir");
-                                   argv.push_back(outputDir);
-                           }
-                           if(!initialPause) argv.push_back("--no-initial-pause");
-                           if(!useGui) argv.push_back("--no-gui");
-                           obj.init(argv, "pySPlisHSPlasH");
-                       };
+                       bool useGui = true,
+                       float stopAt = -1.0f,
+                       std::string param = "")
+{
+        std::vector<std::string> argv;
+        argv.push_back(programName);
+        argv.push_back("--scene-file");
+        argv.push_back(sceneFile);
+        if (!useCache)
+                argv.push_back("--no-cache");
+        argv.push_back("--stopAt");
+        argv.push_back(std::to_string(stopAt));
+        if (strcmp(param.c_str(), "") != 0)
+        {
+                argv.push_back("--param");
+                argv.push_back(param);
+        }
+        if (strcmp(stateFile.c_str(), "") != 0)
+        {
+                argv.push_back("--state-file");
+                argv.push_back(stateFile);
+        }
+        if (strcmp(outputDir.c_str(), "") != 0)
+        {
+                argv.push_back("--output-dir");
+                argv.push_back(outputDir);
+        }
+        if (!initialPause)
+                argv.push_back("--no-initial-pause");
+        if (!useGui)
+                argv.push_back("--no-gui");
+        obj.init(argv, "pySPlisHSPlasH");
+};
 
-void SimulationModule(py::module m_sub){
-    // ---------------------------------------
-    // Enum Simulation Methods
-    // ---------------------------------------
-    py::enum_<SPH::SimulationMethods>(m_sub, "SimulationMethods")
+void SimulationModule(py::module m_sub)
+{
+        // ---------------------------------------
+        // Enum Simulation Methods
+        // ---------------------------------------
+        py::enum_<SPH::SimulationMethods>(m_sub, "SimulationMethods")
             .value("WCSPH", SPH::SimulationMethods::WCSPH)
             .value("PCISPH", SPH::SimulationMethods::PCISPH)
             .value("PBF", SPH::SimulationMethods::PBF)
@@ -74,25 +82,25 @@ void SimulationModule(py::module m_sub){
             .value("PF", SPH::SimulationMethods::PF)
             .value("NumSimulationMethods", SPH::SimulationMethods::NumSimulationMethods);
 
-    // ---------------------------------------
-    // Enum Boundary Handling Methods
-    // ---------------------------------------
-    py::enum_<SPH::BoundaryHandlingMethods>(m_sub, "BoundaryHandlingMethods")
+        // ---------------------------------------
+        // Enum Boundary Handling Methods
+        // ---------------------------------------
+        py::enum_<SPH::BoundaryHandlingMethods>(m_sub, "BoundaryHandlingMethods")
             .value("Akinci2012", SPH::BoundaryHandlingMethods::Akinci2012)
             .value("Koschier2017", SPH::BoundaryHandlingMethods::Koschier2017)
             .value("Bender2019", SPH::BoundaryHandlingMethods::Bender2019)
             .value("NumSimulationMethods", SPH::BoundaryHandlingMethods::NumSimulationMethods);
 
-    // ---------------------------------------
-    // Class Simulation
-    // ---------------------------------------
-    py::class_<SPH::Simulation, GenParam::ParameterObject>(m_sub, "Simulation")
+        // ---------------------------------------
+        // Class Simulation
+        // ---------------------------------------
+        py::class_<SPH::Simulation, GenParam::ParameterObject>(m_sub, "Simulation")
             .def_readwrite_static("SIM_2D", &SPH::Simulation::SIM_2D)
             .def_readwrite_static("PARTICLE_RADIUS", &SPH::Simulation::PARTICLE_RADIUS)
             .def_readwrite_static("GRAVITATION", &SPH::Simulation::GRAVITATION)
             .def_readwrite_static("CFL_METHOD", &SPH::Simulation::CFL_METHOD)
             .def_readwrite_static("CFL_FACTOR", &SPH::Simulation::CFL_FACTOR)
-			.def_readwrite_static("CFL_MIN_TIMESTEPSIZE", &SPH::Simulation::CFL_MIN_TIMESTEPSIZE)
+            .def_readwrite_static("CFL_MIN_TIMESTEPSIZE", &SPH::Simulation::CFL_MIN_TIMESTEPSIZE)
             .def_readwrite_static("CFL_MAX_TIMESTEPSIZE", &SPH::Simulation::CFL_MAX_TIMESTEPSIZE)
             .def_readwrite_static("ENABLE_Z_SORT", &SPH::Simulation::ENABLE_Z_SORT)
 
@@ -138,13 +146,13 @@ void SimulationModule(py::module m_sub){
             .def_static("setCurrent", &SPH::Simulation::setCurrent)
             .def_static("hasCurrent", &SPH::Simulation::hasCurrent)
 
-            .def("addFluidModel", [](SPH::Simulation& current, const std::string &id, std::vector<Vector3r> fluidParticles, std::vector<Vector3r> fluidVelocities, std::vector<unsigned int> fluidObjectIds, const unsigned int nMaxEmitterParticles){
+            .def("addFluidModel", [](SPH::Simulation &current, const std::string &id, std::vector<Vector3r> fluidParticles, std::vector<Vector3r> fluidVelocities, std::vector<unsigned int> fluidObjectIds, const unsigned int nMaxEmitterParticles)
+                 {
                 if(fluidParticles.size() != fluidVelocities.size())
                     throw std::runtime_error("Sizes of position and velocity array must be equal");
                 if (fluidParticles.size() != fluidObjectIds.size())
                     throw std::runtime_error("Sizes of position and object id array must be equal");
-                current.addFluidModel(id, fluidParticles.size(), fluidParticles.data(), fluidVelocities.data(), fluidObjectIds.data(), nMaxEmitterParticles);
-            })
+                current.addFluidModel(id, fluidParticles.size(), fluidParticles.data(), fluidVelocities.data(), fluidObjectIds.data(), nMaxEmitterParticles); })
             .def("getFluidModel", &SPH::Simulation::getFluidModel, py::return_value_policy::reference_internal)
             .def("getFluidModelFromPointSet", &SPH::Simulation::getFluidModelFromPointSet, py::return_value_policy::reference_internal)
             .def("numberOfFluidModels", &SPH::Simulation::numberOfFluidModels)
@@ -200,32 +208,30 @@ void SimulationModule(py::module m_sub){
             .def("getNeighbor", &SPH::Simulation::getNeighbor)
             .def("getNeighborList", &SPH::Simulation::getNeighborList); // TODO: Might not work because of array pointer
 
+        // ---------------------------------------
+        // EXEC SUBMODULE
+        // ---------------------------------------
+        m_sub = m_sub.def_submodule("Exec");
 
-
-    // ---------------------------------------
-    // EXEC SUBMODULE
-    // ---------------------------------------
-    m_sub = m_sub.def_submodule("Exec");
-
-    // ---------------------------------------
-    // Struct Exporter
-    // ---------------------------------------
-    py::class_<SPH::SimulatorBase::Exporter>(m_sub, "Exporter")
+        // ---------------------------------------
+        // Struct Exporter
+        // ---------------------------------------
+        py::class_<SPH::SimulatorBase::Exporter>(m_sub, "Exporter")
             .def_readwrite("key", &SPH::SimulatorBase::Exporter::m_key)
             .def_readwrite("name", &SPH::SimulatorBase::Exporter::m_name)
             .def_readwrite("decription", &SPH::SimulatorBase::Exporter::m_description)
             .def_readwrite("id", &SPH::SimulatorBase::Exporter::m_id)
             .def_readwrite("exporter", &SPH::SimulatorBase::Exporter::m_exporter);
 
-    // ---------------------------------------
-    // Simulator Base class
-    // ---------------------------------------
-    py::class_<SPH::SimulatorBase::SimulationMethod>(m_sub, "SimulationMethod")
+        // ---------------------------------------
+        // Simulator Base class
+        // ---------------------------------------
+        py::class_<SPH::SimulatorBase::SimulationMethod>(m_sub, "SimulationMethod")
             .def_readwrite("simulationMethod", &SPH::SimulatorBase::SimulationMethod::simulationMethod)
             .def_readwrite("simulation", &SPH::SimulatorBase::SimulationMethod::simulation)
             .def_readonly("model", &SPH::SimulatorBase::SimulationMethod::model); // TODO: this is public property but defined as readonly because of deleted assignment operator. check in future
 
-    py::class_<SPH::SimulatorBase, GenParam::ParameterObject>(m_sub, "SimulatorBase")
+        py::class_<SPH::SimulatorBase, GenParam::ParameterObject>(m_sub, "SimulatorBase")
             .def_readwrite_static("PAUSE", &SPH::SimulatorBase::PAUSE)
             .def_readwrite_static("PAUSE_AT", &SPH::SimulatorBase::PAUSE_AT)
             .def_readwrite_static("STOP_AT", &SPH::SimulatorBase::STOP_AT)
@@ -255,19 +261,20 @@ void SimulationModule(py::module m_sub){
             //     }
             //     obj.init(argv.size(), const_cast<char**>(cargv.data()), windowName);
             // })
-            .def("init", overload_cast_<std::vector<std::string>, const std::string&>()(&SPH::SimulatorBase::init))
-            .def("init", &py_init_simulator, 
-                            "sceneFile"_a = "data/Scenes/DoubleDamBreak.json",
-                            "programName"_a = "pySPlisHSPlasH",
-                            "useCache"_a = true,
-                            "stateFile"_a = "",
-                            "outputDir"_a = "",
-                            "initialPause"_a = true,
-                            "useGui"_a = true,
-							"stopAt"_a = -1.0,
-							"param"_a = "")
+            .def("init", overload_cast_<std::vector<std::string>, const std::string &>()(&SPH::SimulatorBase::init))
+            .def("init", &py_init_simulator,
+                 "sceneFile"_a = "data/Scenes/DoubleDamBreak.json",
+                 "programName"_a = "pySPlisHSPlasH",
+                 "useCache"_a = true,
+                 "stateFile"_a = "",
+                 "outputDir"_a = "",
+                 "initialPause"_a = true,
+                 "useGui"_a = true,
+                 "stopAt"_a = -1.0,
+                 "param"_a = "")
             .def("initSimulation", &SPH::SimulatorBase::initSimulation)
-			.def("runSimulation", &SPH::SimulatorBase::runSimulation)
+            .def("runSimulation", &SPH::SimulatorBase::runSimulation)
+            .def("deferredInit", &SPH::SimulatorBase::deferredInit)
             .def("cleanup", &SPH::SimulatorBase::cleanup)
 
             .def("reset", &SPH::SimulatorBase::reset)
@@ -304,7 +311,7 @@ void SimulationModule(py::module m_sub){
             .def("getSceneLoader", &SPH::SimulatorBase::getSceneLoader, py::return_value_policy::reference_internal)
 
             .def("getExePath", &SPH::SimulatorBase::getExePath)
-            
+
             .def("getUseParticleCaching", &SPH::SimulatorBase::getUseParticleCaching)
             .def("setUseParticleCaching", &SPH::SimulatorBase::setUseParticleCaching)
             .def("getUseGUI", &SPH::SimulatorBase::getUseGUI)
@@ -337,23 +344,23 @@ void SimulationModule(py::module m_sub){
 
             .def("activateExporter", &SPH::SimulatorBase::activateExporter)
 
-			.def("setTimeStepCB", &SPH::SimulatorBase::setTimeStepCB)
+            .def("setTimeStepCB", &SPH::SimulatorBase::setTimeStepCB)
             .def("setResetCB", &SPH::SimulatorBase::setResetCB);
 
-     // ---------------------------------------
-    // SceneConfiguration
-    // ---------------------------------------
-    py::class_<SPH::SceneConfiguration>(m_sub, "SceneConfiguration")
+        // ---------------------------------------
+        // SceneConfiguration
+        // ---------------------------------------
+        py::class_<SPH::SceneConfiguration>(m_sub, "SceneConfiguration")
             .def_static("getCurrent", &SPH::SceneConfiguration::getCurrent, py::return_value_policy::reference)
             .def_static("setCurrent", &SPH::SceneConfiguration::setCurrent)
             .def_static("hasCurrent", &SPH::SceneConfiguration::hasCurrent)
             .def("getSceneFile", &SPH::SceneConfiguration::getSceneFile)
             .def("getScene", &SPH::SceneConfiguration::getScene, py::return_value_policy::reference_internal);
 
-    // ---------------------------------------
-    // BoundarySimulator
-    // ---------------------------------------
-    py::class_<SPH::BoundarySimulator>(m_sub, "BoundarySimulator")
+        // ---------------------------------------
+        // BoundarySimulator
+        // ---------------------------------------
+        py::class_<SPH::BoundarySimulator>(m_sub, "BoundarySimulator")
             .def(py::init<>())
             .def("init", &SPH::BoundarySimulator::init)
             .def("timeStep", &SPH::BoundarySimulator::timeStep)
@@ -361,11 +368,9 @@ void SimulationModule(py::module m_sub){
             .def("reset", &SPH::BoundarySimulator::reset)
             .def("updateBoundaryForces", &SPH::BoundarySimulator::updateBoundaryForces);
 
-    // ---------------------------------------
-    // StaticBoundarySimulator
-    // ---------------------------------------
-    py::class_<SPH::StaticBoundarySimulator, SPH::BoundarySimulator>(m_sub, "StaticBoundarySimulator")
-            .def(py::init<SPH::SimulatorBase*>());
-
+        // ---------------------------------------
+        // StaticBoundarySimulator
+        // ---------------------------------------
+        py::class_<SPH::StaticBoundarySimulator, SPH::BoundarySimulator>(m_sub, "StaticBoundarySimulator")
+            .def(py::init<SPH::SimulatorBase *>());
 }
-
