@@ -64,7 +64,8 @@ int SimulatorBase::CAMERA_LOOKAT = -1;
 
 SimulatorBase::SimulatorBase()
 {
-	Utilities::logger.addSink(shared_ptr<Utilities::ConsoleSink>(new Utilities::ConsoleSink(Utilities::LogLevel::INFO)));
+	//Utilities::logger.addSink(shared_ptr<Utilities::ConsoleSink>(new Utilities::ConsoleSink(Utilities::LogLevel::INFO)));
+	Utilities::logger.addSink(shared_ptr<Utilities::ConsoleSink>(new Utilities::ConsoleSink(Utilities::LogLevel::WARN)));
 
 	m_boundarySimulator = nullptr;
 	m_gui = nullptr;
